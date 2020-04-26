@@ -17,3 +17,5 @@ Features/Additions:
 * PID 1 will control the heater
 * Maybe have the heater fan run at 100% all the time and just be on/off control. 
   * Control Strategy
+  1) PWM Will vary the heater to accommodate a set temperature.
+  2) Heater Fan will Turn on or off depending on if its needed or not. So, if the heater is ramping up, the fan will come on. This suggests really long loop refresh times, maybe 10 seconds should be good. Its a small box.
