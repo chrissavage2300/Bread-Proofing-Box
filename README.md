@@ -24,11 +24,11 @@ Features/Additions:
 * Complex Add on: 3D printed louver doors so heat isnt lost when the cooling fan isnt on. 
 
 IO List:
-Start Button
-Stop Button
-Quadrature Encoder Knob to select temperature
-OR Up/Down Button.
-Analog Temperature (MCP 9700)
-Analog Humidity
-PWM out (3?)
-I2C Display, so 2 extra IO
+* Start Button
+* Stop Button
+* Quadrature Encoder Knob to select temperature
+* OR Up/Down Button.
+* Analog Temperature (MCP 9700)
+* Analog Humidity
+* PWM out (3?)
+* I2C Display, so 2 extra IO
