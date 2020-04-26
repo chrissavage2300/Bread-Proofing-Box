@@ -19,3 +19,5 @@ Features/Additions:
   * Control Strategy
   1) PWM Will vary the heater to accommodate a set temperature.
   2) Heater Fan will Turn on or off depending on if its needed or not. So, if the heater is ramping up, the fan will come on. This suggests really long loop refresh times, maybe 10 seconds should be good. Its a small box.
+  3) So if the box is at the set temperature, the heater will be at some value, and the fan will be circulating air pretty much. The heater doesnt need to be shut off in this case, but the duty cycle will be low probably. Maybe add in an input to shut the PID off but keep the fan on to circulate air? 
+* Optional: Cool Air/Room temperature Air intake. Control scheme would probably be to turn on this fan if its get too hot and shut the heater off completely and just keep the recirculation fan running.   
