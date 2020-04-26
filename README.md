@@ -10,7 +10,7 @@ Ideas/wants: Spawned from the sour dough book I have that talks about a storage 
 Next I thought of using a cartridge heater, it could work but felt like it would be too inefficient. I finally settled on using just a small space heater. When this is done there is another added benefit: I can dehydrate food or make yogurt. I dont know yet what the lower and upper temperature bounds are of a 250W heater.
 
 Features/Additions:
-* A HDX 7 gallon storage bin is just big enough for the bowl I use and can fit a jar or two inside as well
+* A HDX 12 gallon storage bin is just big enough for the bowl I use and can fit a jar or two inside as well
 * 250W 120VAC Heater from Walmart. Cant wait to take it apart! I have a suspicion its like the so called "100W 12V PTC heater" on ebay.
 * I figure I'll add in an intake fan as well for cool or room temp air. Oh boy..if I wanted to cool the air that would be interesting. 
 * Which suggests a dual PID of sorts. I dont have one PID working yet, but I have some code that might work thats unfinished. 
@@ -21,3 +21,4 @@ Features/Additions:
   2) Heater Fan will Turn on or off depending on if its needed or not. So, if the heater is ramping up, the fan will come on. This suggests really long loop refresh times, maybe 10 seconds should be good. Its a small box.
   3) So if the box is at the set temperature, the heater will be at some value, and the fan will be circulating air pretty much. The heater doesnt need to be shut off in this case, but the duty cycle will be low probably. Maybe add in an input to shut the PID off but keep the fan on to circulate air? 
 * Optional: Cool Air/Room temperature Air intake. Control scheme would probably be to turn on this fan if its get too hot and shut the heater off completely and just keep the recirculation fan running.   
+* Complex Add on: 3D printed louver doors so heat isnt lost when the cooling fan isnt on. 
