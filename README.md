@@ -32,9 +32,10 @@ IO List:
 * Analog Humidity
 * PWM out (3?)
 * I2C Display, so 2 extra IO
+* ZCD input to sync heater but this can be acommplished with extra circuitry too
 
 Based on this, I would use one of the following PIC micro's
 * PIC16F1773
 * PIC16F15355
-* PIC18F24Q10
-* PIC18F24K40
+~~* PIC18F24Q10~~
+~~* PIC18F24K40~~
