@@ -28,11 +28,12 @@ IO List:
 * Stop Button
 * Quadrature Encoder Knob to select temperature
 * OR Up/Down Button.
-* Analog Temperature (MCP 9700)
-* Analog Humidity
+* Internal Analog Temperature (MCP 9700)
+* Internal Analog Humidity
 * PWM out (3?)
 * I2C Display, so 2 extra IO
 * ZCD input to sync heater but this can be acommplished with extra circuitry too
+* External Ambient Temp
 
 Based on this, I would use one of the following PIC micro's
 * PIC16F1773
