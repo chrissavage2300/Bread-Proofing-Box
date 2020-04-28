@@ -2,7 +2,7 @@
 A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
-4/26/2020-Initial Idea
+<b>4/26/2020-Initial Idea</b>
 
 
 Ideas/wants: Spawned from the sour dough book I have that talks about a storage box or a cooler along side a light to proof bread dough or proof sour dough starter. They use a light bulb, but my experience with bulbs is that they get pretty hot, almost to 90-100F. I only know this because I used them to start seeds as well. I had then begun to search around for heaters, initially I thought of winding my own using nichrome or kanthal wire, but deemed that too be unsafe as I could possibly touch it by accident.
