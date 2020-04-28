@@ -3,7 +3,7 @@ A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
 
-<b>4/28/2020</b>-Got mechanical encoder code working. 
+<b>4/28/2020</b>-Got mechanical encoder code working. Also stuck the heater in the box to get an idea of what kind of temps I could expect. It seemed to max out to around 114F and then the shutoff kicked in slightly after that. So the max temp should be around 120F. It took around 10 minutes to get up to this temp. Its not high enough for dehydration, but it is hot enough for bread making and yogurt making. Wonder how hot it would get if the over temp switch was bypassed. 
 
 <b>4/26/2020-Initial Idea</b>
 
