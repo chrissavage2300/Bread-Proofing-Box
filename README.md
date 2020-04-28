@@ -8,10 +8,13 @@ A PID controlled bread proofing box with heater
 Display thoughts:
 * Internal Temperature (°F)
 * External Temperature (°F)
+* Humidity (%)
 * Run Time (HH:MM:SS)
 * Set Temperature (°F)
 
 More thoughts: I could use this box to dry soap.
+
+Since I want to keep the integrity of the box, maybe I should mount the system on the top of the box. This way I can still use the box for storage when not in use. So have the heater fan on top and it can be a dual use fan for intake, and then have another fan on the opposite end on top for exhaust. 
 
 
 <b>4/26/2020-Initial Idea</b>
@@ -34,18 +37,20 @@ Features/Additions:
   3) So if the box is at the set temperature, the heater will be at some value, and the fan will be circulating air pretty much. The heater doesnt need to be shut off in this case, but the duty cycle will be low probably. Maybe add in an input to shut the PID off but keep the fan on to circulate air? 
 * Optional: Cool Air/Room temperature Air intake. Control scheme would probably be to turn on this fan if its get too hot and shut the heater off completely and just keep the recirculation fan running.   
 * Complex Add on: 3D printed louver doors so heat isnt lost when the cooling fan isnt on. 
+* Exhaust fan and intake fan. Heater fan will be the recirculation fan. 
 
 IO List:
 * Start Button
 * Stop Button
 * Quadrature Encoder Knob to select temperature
-* OR Up/Down Button.
 * Internal Analog Temperature (MCP 9700)
+* External Analog Temperature
 * Internal Analog Humidity
-* PWM out (3?)
+* Intake Fan-PWM or DO
+* Exhaust Fan-DO
+* Heater fan/Recirculation Fan-PWM or DO
 * I2C Display, so 2 extra IO
 * ZCD input to sync heater but this can be acommplished with extra circuitry too
-* External Ambient Temp
 * 32kHz Crystal for clock
 
 Based on this, I would use one of the following PIC micro's
