@@ -1,7 +1,7 @@
 # Bread-Proofing-Box
 A PID controlled bread proofing box with heater
 
-<H1.Change log</H1.
+<H1>Change log</H1>
 4/26/2020-Initial Idea
 
 
