@@ -5,6 +5,15 @@ A PID controlled bread proofing box with heater
 
 <b>4/28/2020</b>-Got mechanical encoder code working. Also stuck the heater in the box to get an idea of what kind of temps I could expect. It seemed to max out to around 114F and then the shutoff kicked in slightly after that. So the max temp should be around 120F. It took around 10 minutes to get up to this temp. Its not high enough for dehydration, but it is hot enough for bread making and yogurt making. Wonder how hot it would get if the over temp switch was bypassed. 
 
+Display thoughts:
+* Internal Temperature (°F)
+* External Temperature (°F)
+* Run Time (HH:MM:SS)
+* Set Temperature (°F)
+
+More thoughts: I could use this box to dry soap.
+
+
 <b>4/26/2020-Initial Idea</b>
 
 
@@ -37,6 +46,7 @@ IO List:
 * I2C Display, so 2 extra IO
 * ZCD input to sync heater but this can be acommplished with extra circuitry too
 * External Ambient Temp
+* 32kHz Crystal for clock
 
 Based on this, I would use one of the following PIC micro's
 * PIC16F1773
