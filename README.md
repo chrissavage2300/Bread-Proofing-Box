@@ -3,8 +3,7 @@ A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
 
-<b>4/28/2020</b>
-Got mechanical encoder code working. 
+<b>4/28/2020</b>-Got mechanical encoder code working. 
 
 <b>4/26/2020-Initial Idea</b>
 
