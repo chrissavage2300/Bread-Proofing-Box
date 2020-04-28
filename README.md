@@ -38,8 +38,8 @@ IO List:
 Based on this, I would use one of the following PIC micro's
 * PIC16F1773
 * PIC16F15355
-* PIC18F24Q10~~
-* PIC18F24K40~~
+~~* PIC18F24Q10~~
+~~* PIC18F24K40~~
 
 The Box:
 ![Box](https://raw.githubusercontent.com/chrissavage2300/Bread-Proofing-Box/master/Photos/20200428_120737%5B1%5D.jpg)
