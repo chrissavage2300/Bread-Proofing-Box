@@ -1,5 +1,5 @@
 ![alt text](https://raw.githubusercontent.com/chrissavage2300/Bread-Proofing-Box/master/Photos/20200428_120348%5B1%5D.jpg)
-
+The box.
 ![alt text](https://raw.githubusercontent.com/chrissavage2300/Bread-Proofing-Box/master/Photos/20200427_155402%5B1%5D.jpg)
 Fan looks pretty small, around 60mm I'd say. I probably wont need that big of a fan for the intake like I suspected.
 ![alt text](https://raw.githubusercontent.com/chrissavage2300/Bread-Proofing-Box/master/Photos/20200427_170443%5B1%5D.jpg)
