@@ -3,6 +3,10 @@ A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
 
+<b>5/03/2020</b>-Initially started with a PIC16F15356 but realized that it may need more memory for running a glcd. Also may need more processing power and higher clock frequency's so I may go with a 18F26Q10. 
+
+Also I may rethink the heater. It kind of smells like burning plastic when on, so I may design my own using Nichrome 60 wire
+
 <b>4/28/2020</b>-Got mechanical encoder code working. Also stuck the heater in the box to get an idea of what kind of temps I could expect. It seemed to max out to around 114F and then the shutoff kicked in slightly after that. So the max temp should be around 120F. It took around 10 minutes to get up to this temp. Its not high enough for dehydration, but it is hot enough for bread making and yogurt making. Wonder how hot it would get if the over temp switch was bypassed. 
 
 Display thoughts:
