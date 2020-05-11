@@ -2,6 +2,7 @@
 A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
+<b>5/11/2020</b> Added in documents to show heatsink calculations along with heater wire calculations
 
 <b>5/11/2020</b>Idea: Timer function on screen, count down? Time Remaining. Have buzzer go off when "done". This would be useful for a hydrate function.
 
