@@ -3,7 +3,9 @@ A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
 
-<b>5/08/2020</b>-Initial Commit. Board sent to PCB maker.
+<b>5/11/2020</b>Idea: Timer function on screen, count down? Time Remaining. Have buzzer go off when "done". This would be useful for a hydrate function.
+
+<b>5/08/2020</b>- Board sent to PCB maker.
 
 <b>5/03/2020</b>-Initially started with a PIC16F15356 but realized that it may need more memory for running a glcd. Also may need more processing power and higher clock frequency's so I may go with a 18F26Q10. 
 
