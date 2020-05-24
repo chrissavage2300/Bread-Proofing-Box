@@ -2,6 +2,8 @@
 A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
+<b>5/24/2020</b> A major error was found. The power IC's IC2 and 3 are backwards. I thought I fixed it from an older revision, but guess not. Either way the current board is a dud :(. Also the transformer doesnt fit either, so this is now in pause while I wait and do another PCB revision.
+
 <b>5/11/2020</b> Added in documents to show heatsink calculations along with heater wire calculations
 
 
