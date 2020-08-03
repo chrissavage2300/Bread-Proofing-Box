@@ -3,6 +3,8 @@ A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
 
+<b>8/3/2020</b> Mile stone reached! I managed to dim a light after a few days worth of troubleshooting, I found out I needed a 4 Quad TRIAC. So the main TRIAC is now a BT138-600. I also had to change the output from timer 2 to stay low and then go high, essentially making this a constant off time circuit. Once I got that figured out, I then saw the proper sine waves!
+
 <b>5/29/2020</b> Rotary Encoder Works. Timer 1 also works. Outputs also work. Waiting on Rev B.
 
 <b>5/24/2020</b> A major error was found. The power IC's IC2 and 3 are backwards. I thought I fixed it from an older revision, but guess not. Either way the current board is a dud :(. Also the transformer doesnt fit either, so this is now in pause while I wait and do another PCB revision.
