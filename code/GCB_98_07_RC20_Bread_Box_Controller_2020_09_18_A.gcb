@@ -1,0 +1,449 @@
+'''GCB v0.98.07 RC20
+'''--------------------------------------------------------------------------------------------------------------------------------
+'''2020-08-07
+'''
+'''
+'''@author
+'''@licence GPL
+'''@version
+'''
+'Pin
+'2  RA0 INTERNAL_TEMP (AN0)
+'3  RA1 EXTERNAL_TEMP (AN1)
+'4  RA2 SPARE_INPUT_2 (AN2)
+'5  RA3 VREF  (AN3)
+'6  RA4 SPARE_INPUT (AN4)
+'7  RA5 ENCODER_SW
+'
+'9  RA7 ENCODER_A IOCA7
+'10 RA6 ENCODER_B IOCA6
+'11 RC0 SOSCO
+'12 RC1 SOSCI
+'13 RC2 LCD_RST
+'14 RC3 LCD_CS
+'15 RC4 LCD_SCK
+'16 RC5 LCD_SDA
+'17 RC6 TX
+'18 RC7 RX
+'
+'
+'21 RB0 ZCD
+'22 RB1 LCD_AO
+'23 RB2 EXTRA_FAN
+'24 RB3 EXHAUST_FAN
+'25 RB4 HEATER_FAN
+'26 RB5 HEATER_PWM
+
+'''********************************************************************************
+
+; ----- Configuration
+#chip PIC18F26Q10, 16
+#config '[todo]
+#config LVP = off
+#config MCLRE = OFF
+#Config ZCD = OFF
+#option Explicit
+
+'#include '[todo]
+#include <alps-ec11.h>
+#include <glcd.h>
+#include "gcbversionnumber.cnt"
+
+
+#STARTUP InitCode, 85
+
+Sub InitCode
+  ; ----- PPS Stuff:
+UNLOCKPPS
+'Module: EUSART1
+RC7PPS = 0x0009    'TX1 > RC7
+'Module: EXT_INT
+INT0PPS = 0x0008    'RB0 > INT0
+
+'Module: MSSP1
+SSPCLKPPS = 0x0013    'RC3 > SCK1
+RC3PPS = 0x000F    'SCK1 > RC3 (bi-directional)
+SSPDATPPS = 0x0012    'RC2 > SDA1
+RC2PPS = 0x0010    'SDA1 > RC2 (bi-directional)
+
+
+
+
+'Template comment at the end of the config file
+LockPPS
+
+DIR PORTB.0 IN 'AC line detect Pin
+DIR PORTA.7 IN
+DIR PORTA.6 IN
+DIR PORTA.5 IN
+
+DIR PORTB.1 OUT
+DIR PORTB.2 OUT
+DIR PORTB.3 OUT
+DIR HeaterFan OUT
+DIR PORTB.5 OUT
+End Sub
+
+;Version conrtol
+  dim versionString as string * 40
+  versionString = "Build"+GCBBuildStr
+  versionString = versionString + "@"+GCBBuildTimeStr
+
+; ----- Define Hardware settings
+
+Hardware_Settings:
+
+; ----- UART Set
+#DEFINE USART_BAUD_RATE 56000
+#DEFINE USART_TX_BLOCKING
+
+
+; ----- PID_Defines
+#DEFINE IntegralWindupConstant 255  'if this is too big, the output will respond slowly.
+#DEFINE Kp 20
+#DEFINE KI 2
+#DEFINE KD 2
+
+; ----- Outputs Define
+#DEFINE Heater PORTB.5
+#DEFINE HeaterFan PORTB.4
+#DEFINE ExhaustFan PORTB.3
+#DEFINE ExtraFan PORTB.2
+
+; ----- GLCD Ports
+'#define GLCD_DO  PORTC.5  'SPI
+'#define GLCD_SCK PORTC.4  'SPI
+'#define GLCD_DC PORTB.1 ' PIN AO
+'#define GLCD_CS PORTC.3 ' PIN CS
+'#define GLCD_RESET PORTC.2 ' PIN RST
+HI2CMode Master
+#define HI2C_BAUD_RATE 1000
+#define HI2C_DATA PORTC.2
+#define HI2C_CLOCK PORTC.3
+Dir HI2C_DATA in
+Dir HI2C_CLOCK in
+#define GLCD_TYPE GLCD_TYPE_SSD1306
+#define GLCD_I2C_Address 0x78
+
+; ----- Encoder Ports
+#DEFINE ALPS_ENCODER_A PortA.6
+#DEFINE ALPS_ENCODER_B PortA.7
+#DEFINE ALPS_ENCODER_SW PortA.5
+#DEFINE Alps_ENCODER_ENC_READ_DELAY 10
+
+; ----- Temp Limits
+#define MaxTemp 90
+#define MinTemp 15
+
+
+; ----- External Variables
+    DIM InternalTemp As Word
+    DIM ExternalTemp As Word
+
+
+
+; ----- Internal Variables
+    Dim Secs, OldSecs as Byte
+    Dim Hours as Byte
+    Dim Minutes as Byte
+    Dim Encoder_result as Integer
+    Dim Setpoint as Byte
+    Dim LoopTimer as Byte
+    Dim ReadAlps as Byte
+    Dim DrawCircleState as Bit
+    Dim ExternalTempScaled as Word
+    Dim InternalTempScaled as Word
+    Dim Timer1StartBit as Bit
+    Dim ElapsedSeconds as Byte
+    Dim ElapsedMinutes as Byte
+    Dim ElapsedHours as Byte
+
+InitComplete:
+    HSerPrintCRLF 2
+    HSerPrint versionString
+    HSerPrintCRLF
+
+Timer1Setup:
+'SOSC bits must be before you use the osc.
+    SOSCPWR=1
+    SOSCEN=1
+    SOSCEN=1
+    wait while OSCSTAT.SOR = 0
+    TMR1CLK = 0x06
+    Inittimer1 (SOSC ,PS1_1)
+    Settimer 1,32768 '// Prescale for 1 sec
+    Set T1CON.2 On  '// do not sync to FOSC
+'    StartTimer 1
+Timer1Running:
+    HSerPRINT "Timer1 Setup"
+    HSerPrintCRLF
+
+
+Timer2Setup:
+; ----- Timer2
+
+    #Define Match_Val PR2 'PR2 is the timer 2 match register
+    Inittimer2 1,PS2_16, POST_8  'select for 120Hz, or half wave.
+    Timer2Running:
+    HSerPRINT "Timer2 Setup"
+    HSerPrintCRLF
+
+
+
+InterruptSubs:
+; ----- Interrupt Subs
+    On interrupt timer1Overflow Call SecondsCounter
+    On interrupt ExtInt0 Call ZCD_Detect
+    On interrupt Timer2Match Call MainOutputOff
+    On interrupt PortChange Call HandleIOC
+    Int0EDG=0
+     //interrupt on change for group IOCAF - flag
+    IOCAF6 = 0
+    //interrupt on change for group IOCAN - negative
+    IOCAN6 = 1
+    //interrupt on change for group IOCAP - positive
+    IOCAP6 = 0
+
+    HSerPRINT "On Interrupt initialised"
+    HSerPrintCRLF
+
+PIDVars:
+    Dim Error as Integer
+    Dim PreviousError as Integer
+    Dim IntegralError as Integer
+    Dim DerivativeError as Integer
+    Dim PID_Output as Byte
+    Dim Timer2Read as Byte
+
+    ; ----- Set Bits
+    ExternalTemp = 0
+    InternalTemp = 0
+    ExternalTempScaled = 0
+    Encoder_result = 0
+    Alps_ESB_Bit = 0
+    HeaterFan = 0
+    ExhaustFan = 0
+; ----- NOTE SET POINT IS SET FOR EXPERIMENTING
+    Setpoint = 25
+    Secs = 0
+    OldSecs = 60
+    IntegralError=0
+    PreviousError=0
+    LoopTimer = 0
+    Timer1StartBit = 0
+    Alps_Count_delta = MinTemp
+    ElapsedSeconds = 0
+    ElapsedMinutes = 0
+    ElapsedHours = 0
+
+    ;RA0= INTERNAL TEMP
+    ;RA1= EXTERNAL TEMP
+
+' *********************************************************************************************
+MainProgramStart:
+    GLCDCLS
+    HSerPRINT "Entering Main do-loop"
+    HSerPrintCRLF
+    GLCDPrint (0,10,"Setpoint: ")
+    GLCDPrint (0,20,"Ambient Temp: ")
+    GLCDPrint (0,30,"Box Temp: ")
+    GLCDPrint (0,40,"Elapsed Time: ")
+    'Just show the temp the first time around
+    InternalTemp = ReadAD10(ANA0, TRUE)
+    InternalTempScaled= ((InternalTemp*48)-5000)/100
+
+
+do
+
+  GLCDPrint (60,10,Setpoint)
+  GLCDPrint (60,30,InternalTempScaled)
+  GLCDPrint (100,40,ElapsedSeconds)
+  GLCDPrint (90,40,ElapsedMinutes)
+  GLCDPrint (80,40,ElapsedHours)
+
+'Shut off the output if the temp sensor is at max temp. Turn on the
+'intake and exhaust fan to cool things down
+If InternalTempScaled >= MaxTemp then
+  PID_Output=250
+  HeaterFan=1
+  ExhaustFan=1
+End if
+
+If Timer1StartBit = 1 then
+  StartTimer 1
+  HeaterFan=1
+  GLCDPrint (0,50,"Program Running")
+  else
+  StopTimer 1
+  PID_Output=255  'set output off
+  HeaterFan=0
+  ElapsedSeconds=0
+  ElapsedMinutes=0
+  ElapsedHours=0
+  GLCDPrint (0,50,"Program Stopped")
+End if
+
+  'Take a reading every 10 seconds.
+  If LoopTimer = 5 then
+
+    LoopTimer = 0
+    InternalTemp = ReadAD10(ANA0, TRUE)
+    InternalTempScaled= ((InternalTemp*48)-5000)/100
+    Error=Setpoint-InternalTempScaled
+    IntegralError=IntegralError+Error
+
+    ;Just check to make sure the integral doesn't get too large
+    ;Default: +50/-50
+    If IntegralError> IntegralWindupConstant then
+      IntegralError=IntegralWindupConstant
+    else if IntegralError<0 then
+      IntegralError=0
+    end if
+
+
+    DerivativeError=Error-PreviousError
+    PreviousError=Error
+
+    PID_Output=(Error*Kp)
+    PID_Output=(IntegralError/KI)+PID_Output
+    PID_Output=(DerivativeError*KD)+PID_Output
+
+    If PID_Output> 255 then
+      PID_Output=255
+    else if PID_Output<0 then
+      PID_Output=0
+    end if
+
+    HSerPrint "Internal Temp:"
+    HSerPrint(InternalTempScaled)
+    HSerPrintCRLF
+    HSerPrint "Error:"
+    HSerPrint(Error)
+    HSerPrintCRLF
+    HSerPrint "Integral:"
+    HSerPrint(IntegralError)
+    HSerPrintCRLF
+    HSerPrint "dx/dy:"
+    HSerPrint(DerivativeError)
+    HSerPrintCRLF
+    HSerPRINT "PID OUTPUT: "
+    HSerPRINT PID_Output
+    HSerPrintCRLF
+    DrawCircleState=!DrawCircleState
+  End if
+
+'  If DrawCircleState=1 then
+'    filledcircle(117,5,5,0x0001)
+'    else
+'    filledcircle(117,5,5,0x0000)
+'  end if
+
+
+  if ReadAlps = 1 then
+    ReadAlps = 0
+    Encoder_result = Encoder_result + Alps_Count_delta
+    Setpoint=Encoder_result
+
+    if Setpoint <= MinTemp then
+
+      Encoder_result = MinTemp
+      Setpoint = MinTemp
+      Alps_Count_delta = MinTemp
+
+    end if
+
+    if Setpoint >= MaxTemp then
+      Encoder_result = MaxTemp
+      Setpoint = MaxTemp
+      Alps_Count_delta = MaxTemp
+
+    end if
+    HSerPrint "Set Point: "
+    HSerPrint Setpoint
+    HSerSend 13
+    HSerSend 10
+
+  On interrupt PortChange Call HandleIOC
+  end if
+
+
+  if ALPS_ENCODER_SW = 0 then
+  wait 100 ms
+    Timer1StartBit=!Timer1StartBit
+    'ALPS_ENCODER_SW =!ALPS_ENCODER_SW
+    HSerPRINT "Press seen"
+    HSerPrintCRLF
+  end if
+
+
+
+loop
+
+
+MainProgramEnd:
+
+Sub SecondsCounter
+
+  TMR1H = 0x80  '// Preload timer
+  Secs++ '// Increment seconds
+  LoopTimer++
+  ElapsedSeconds++
+
+  If Secs >59 Then
+    ElapsedMinutes++
+    Minutes++
+    Secs = 0
+    ElapsedSeconds=0
+  End if
+  If Minutes >59 Then
+    ElapsedHours++
+    Hours++
+    Minutes = 0
+    ElapsedMinutes=0
+  End if
+Extrafan=!Extrafan  'A Status LED to make sure code is executing
+
+End SUB
+'8/7/2020-Reconfirm this
+'Note: Output is inversed
+'As Match Value Increases, the negative duty cycle goes up
+'aka the positive pulse width gets smaller
+'Output phase gets smaller as number gets larger
+Sub ZCD_Detect
+      'wait 1 ms
+
+      Heater=0
+      Match_Val=PID_Output
+      Starttimer 2
+      On interrupt ExtInt0 Call Ignore
+
+End Sub
+
+Sub MainOutputOff
+
+      'ClearTimer 2
+      StopTimer 2
+      Match_Val=0
+      'ClearTimer 2
+      Heater = 1
+      On interrupt ExtInt0 Call ZCD_Detect
+
+End Sub
+end
+
+
+Sub HandleIOC
+
+
+    if IOCAF6 = 1 AND IOCAN6 = 1 then
+      Alps_Encoder_Read
+      if Alps_Count_delta = 0 then
+        Alps_Count_delta=15
+      end if
+      ReadAlps = 1
+      On interrupt PortChange Call Ignore
+      IOCAF6 = 0
+
+    End if
+
+ End Sub
