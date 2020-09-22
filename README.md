@@ -2,6 +2,7 @@
 A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
+<b>9/22/2020</b>After some consideration, I might just end up using a light bulb for a heater instead of the custom one. The one I wound by hand would be great for dehydrating stuff, but it would consume 600W! In open air, a 200W light bulb got pretty hot, so I think I may use a 40W to 60W bulb for such low temperatures. I dont know where else I could look for heater.
 
 <b>9/19/2020</b> Output is now connected to the PID loop in code. After some minor adjustments on the bench, it seems to be working great!
 
