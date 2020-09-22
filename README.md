@@ -3,7 +3,7 @@ A PID controlled bread proofing box with heater
 
 <H3>Change log</H3>
 
-<b>8/3/2020</b> Output is now connected to the PID loop in code. After some minor adjustments on the bench, it seems to be working great!
+<b>9/19/2020</b> Output is now connected to the PID loop in code. After some minor adjustments on the bench, it seems to be working great!
 
 <b>8/3/2020</b> Mile stone reached! I managed to dim a light after a few days worth of troubleshooting, I found out I needed a 4 Quad TRIAC. So the main TRIAC is now a BT138-600. I also had to change the output from timer 2 to stay low and then go high, essentially making this a constant off time circuit. Once I got that figured out, I then saw the proper sine waves!
 
